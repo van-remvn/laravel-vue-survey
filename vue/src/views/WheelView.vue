@@ -11,26 +11,23 @@
       />
 
       <div style="margin-top: 20px;">
-        <button type="button" @click="wheelEl.value.startRotate()" style="background-color: blue; color: white; padding: 15px; border-radius: 5px; font-size: 20px;">Start</button>
-        <h3>Current Points: {{ currentPoint }}</h3>
-        <!-- <p>{{ user.name }}</p> -->
-
+        <!-- <button type="button" @click="wheelEl.value.startRotate()" style="background-color: blue; color: white; padding: 15px; border-radius: 5px; font-size: 20px;">Start</button> -->
+        <p style="font-size: 14px; color: red;">{{ updatePointSuccess }}</p>
+        <h1 style="font-size: 20px;">Current Points: <span style="font-weight: bold;">{{ currentPoint }}</span></h1>
       </div>
     </div>
   </template>
   
   <script setup>
 
-  import { ref, computed, onMounted } from 'vue'
+  import { ref, computed, onMounted, watchEffect } from 'vue'
   import FortuneWheel from 'vue-fortune-wheel'
   import 'vue-fortune-wheel/style.css'
 
   import { useStore } from "vuex";
+  import axiosClient from "../axios";
 
   const store = useStore();
-
-  let currentPoint = ref(0);
-
   
   const prizeId = ref(0)
   
@@ -53,7 +50,7 @@
       bgColor: '#FF0000', // Background color (no need for this parameter when type is image)
       color: '#ffffff', // Font color (this parameter is not required when type is image)
       fontSize: 100,
-      probability: 0 //* Probability, up to 4 decimal places (the sum of the probabilities of all prizes
+      probability: 14 //* Probability, up to 4 decimal places (the sum of the probabilities of all prizes
     },
     {
       id: 2,
@@ -61,7 +58,7 @@
       value: -100,
       bgColor: '#00FF00',
       color: '#ffffff',
-      probability: 0
+      probability: 14
     },
     {
       id: 3,
@@ -69,7 +66,7 @@
       value: 200,
       bgColor: '#0000FF',
       color: '#ffffff',
-      probability: 0
+      probability: 14
     },
     {
       id: 4,
@@ -77,7 +74,7 @@
       value: 500,
       bgColor: '#FFCCFF',
       color: '#ffffff',
-      probability: 0
+      probability: 15
     },
     {
       id: 5,
@@ -85,7 +82,7 @@
       value: -200,
       bgColor: '#00FFFF',
       color: '#ffffff',
-      probability: 0
+      probability: 14
     },
     {
       id: 6,
@@ -93,7 +90,7 @@
       value: -500,
       bgColor: '#FF00FF',
       color: '#ffffff',
-      probability: 0
+      probability: 15
     },
     {
       id: 7,
@@ -101,7 +98,7 @@
       value: 100,
       bgColor: '#C0C0C0',
       color: '#ffffff',
-      probability: 100
+      probability: 14
     },
   ]
   
@@ -130,12 +127,21 @@
   
   onMounted(() => {
     // wheelEl.value.startRotate() // Can start rotation
-    store.dispatch("getUser");
   })
+
+  let currentPoint = ref(0);
+
+  const updatePointSuccess = ref('')
 
   const user = computed(() => store.state.user.data);
 
-  console.log('data: ' + user)
+  // Wait for user.value to be defined before accessing user.value.point
+  watchEffect(() => {
+    if (user.value) {
+      currentPoint.value = user.value.point
+      console.log('data: ' + user.value.point);
+    }
+  });
   
   // Simulate the request back-end interface
   function testRequest (verified, duration) { // verified: whether to pass the verification, duration: delay time
@@ -171,6 +177,20 @@
     // alert(prize.value)
     // console.log(prize.value);
     currentPoint.value += prize.value
+
+    axiosClient.post('/update-point', { point: currentPoint.value, id: user.value.id })
+     .then((response) => {
+        console.log(response.data.success);
+        if (response.data.success == true) {
+            if (prize.value > 0) {
+                updatePointSuccess.value = 'You get ' + prize.value + ' points'
+            } else if (prize.value < 0) {
+                updatePointSuccess.value = 'You will be minused ' + prize.value + ' points'
+            } else {
+                updatePointSuccess.value = 'You do not receive any points'
+            }
+        }
+     })
     // console.log(currentPoint);
   }
   

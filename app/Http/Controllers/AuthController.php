@@ -97,4 +97,21 @@ class AuthController extends Controller
         ]);
     }
 
+    public function updatePoint(Request $request)
+    {
+        // $user = Auth::user();
+
+        // dd($user);
+
+        $updateSuccess = User::where('id', $request->id)->update([
+            'point' => $request->point,
+        ]);
+
+        if ($updateSuccess) {
+            return response([
+                'success' => true
+            ]);
+        }
+    }
+
 }
