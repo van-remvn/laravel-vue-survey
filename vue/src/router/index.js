@@ -9,6 +9,7 @@ import SurveyPublicView from "../views/SurveyPublicView.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
 import AuthLayout from "../components/AuthLayout.vue";
 import store from "../store";
+import WheelView from "../views/WheelView.vue";
 
 const routes = [
   {
@@ -21,6 +22,7 @@ const routes = [
       { path: "/surveys", name: "Surveys", component: Surveys },
       { path: "/surveys/create", name: "SurveyCreate", component: SurveyView },
       { path: "/surveys/:id", name: "SurveyView", component: SurveyView },
+      { path: "/wheelpage", name: "WheelView", component: WheelView}
     ],
   },
   {
@@ -63,7 +65,8 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !store.state.user.token) {
     next({ name: "Login" });
   } else if (store.state.user.token && to.meta.isGuest) {
-    next({ name: "Dashboard" });
+    // next({ name: "Dashboard" });
+    next({ name: "WheelView" });
   } else {
     next();
   }

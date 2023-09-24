@@ -1,5 +1,6 @@
 <template>
   <div>
+  <div>
     <img
       class="mx-auto h-12 w-auto"
       src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
@@ -44,7 +45,7 @@
     </Alert>
     <input type="hidden" name="remember" value="true" />
     <div class="rounded-md shadow-sm -space-y-px">
-      <div>
+      <!-- <div>
         <label for="email-address" class="sr-only">Email address</label>
         <input
           id="email-address"
@@ -55,6 +56,19 @@
           v-model="user.email"
           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
           placeholder="Email address"
+        />
+      </div> -->
+      <div>
+        <label for="email-address" class="sr-only">Username</label>
+        <input
+          id="email-address"
+          name="email"
+          type="text"
+          autocomplete="email"
+          required=""
+          v-model="user.email"
+          class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+          placeholder="Username"
         />
       </div>
       <div>
@@ -99,6 +113,7 @@
       </TButtonLoading>
     </div>
   </form>
+</div>
 </template>
 
 <script setup>
@@ -127,12 +142,18 @@ function login(ev) {
     .then(() => {
       loading.value = false;
       router.push({
-        name: "Dashboard",
+        // name: "Dashboard",
+        name: "WheelView",
       });
     })
     .catch((err) => {
       loading.value = false;
-      errorMsg.value = err.response.data.error;
+      // errorMsg.value = err.response.data.error;
+      if (err.response.data.errors['email'] != null) {
+        errorMsg.value = err.response.data.errors['email'][0]
+      } else {
+        errorMsg.value = err.response.data.errors
+      }
     });
 }
 </script>

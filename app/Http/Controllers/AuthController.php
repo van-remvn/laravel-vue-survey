@@ -25,44 +25,55 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|string|unique:users,email',
+            // 'name' => 'required|string',
+            // 'email' => 'required|email|string|unique:users,email',
+            // 'password' => [
+            //     'required',
+            //     'confirmed',
+            //     Password::min(8)->mixedCase()->numbers()->symbols()
+            // ]
+            'email' => 'required|string|unique:users,email',
             'password' => [
-                'required',
-                'confirmed',
-                Password::min(8)->mixedCase()->numbers()->symbols()
-            ]
+                'bail', 'required', Password::min(8), 'regex:/^[a-zA-Z0-9.*?\[#?!@$%^&*-]+$/u'
+            ],
         ]);
 
         /** @var \App\Models\User $user */
         $user = User::create([
-            'name' => $data['name'],
+            // 'name' => $data['name'],
+            'name' => $data['email'],
             'email' => $data['email'],
             'password' => bcrypt($data['password'])
         ]);
-        $token = $user->createToken('main')->plainTextToken;
+        // $token = $user->createToken('main')->plainTextToken;
+
+        // return response([
+        //     'user' => $user,
+        //     'token' => $token
+        // ]);
 
         return response([
-            'user' => $user,
-            'token' => $token
+            'success' => true
         ]);
     }
 
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email|string|exists:users,email',
+            // 'email' => 'required|email|string|exists:users,email',
+            'email' => 'required|string|exists:users,email',
             'password' => [
                 'required',
             ],
             'remember' => 'boolean'
-        ]);
+        ],['email.exists' => 'Username is not correct!']);
         $remember = $credentials['remember'] ?? false;
         unset($credentials['remember']);
 
         if (!Auth::attempt($credentials, $remember)) {
             return response([
-                'error' => 'The Provided credentials are not correct'
+                // 'error' => 'The Provided credentials are not correct'
+                'errors' => 'Password is not correct!'
             ], 422);
         }
         $user = Auth::user();

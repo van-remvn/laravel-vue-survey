@@ -34,19 +34,26 @@
 
       <input type="hidden" name="remember" value="true" />
       <div class="rounded-md shadow-sm -space-y-px">
-        <TInput
+        <!-- <TInput
           name="name"
           v-model="user.name"
           :errors="errors"
           placeholder="Full Name"
           inputClass="rounded-t-md"
-        />
-        <TInput
+        /> -->
+        <!-- <TInput
           type="email"
           name="email"
           v-model="user.email"
           :errors="errors"
           placeholder="Email Address"
+        /> -->
+        <TInput
+          type="text"
+          name="email"
+          v-model="user.email"
+          :errors="errors"
+          placeholder="Username"
         />
         <TInput
           type="password"
@@ -102,7 +109,8 @@ function register(ev) {
     .then(() => {
       loading.value = false;
       router.push({
-        name: "Dashboard",
+        // name: "Dashboard",
+        name: "Login",
       });
     })
     .catch((error) => {
