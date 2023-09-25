@@ -1,6 +1,7 @@
 <template>
   <PageComponent title="Dashboard">
-    <div v-if="loading" class="flex justify-center">Loading...</div>
+    <p>This is Dashboard Page</p>
+    <!-- <div v-if="loading" class="flex justify-center">Loading...</div>
     <div
       v-else
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 text-gray-700"
@@ -104,7 +105,7 @@
           Your don't have answers yet
         </div>
       </DashboardCard>
-    </div>
+    </div> -->
   </PageComponent>
 </template>
 

@@ -34,8 +34,11 @@ class AuthController extends Controller
             // ]
             'email' => 'required|string|unique:users,email',
             'password' => [
-                'bail', 'required', Password::min(8), 'regex:/^[a-zA-Z0-9.*?\[#?!@$%^&*-]+$/u'
+                'bail', 'required', 'confirmed', Password::min(8), 'regex:/^[a-zA-Z0-9.*?\[#?!@$%^&*-]+$/u'
             ],
+        ], [
+            'email.required' => 'Username field is required.',
+            'email.unique' => 'This Username has already taken.',
         ]);
 
         /** @var \App\Models\User $user */
@@ -66,13 +69,17 @@ class AuthController extends Controller
                 'required',
             ],
             'remember' => 'boolean'
-        ],['email.exists' => 'Username is not correct!']);
+        ], [
+            'email.required' => 'Username field is required.',
+            'email.exists' => 'Username is not correct.',
+        ]);
         $remember = $credentials['remember'] ?? false;
         unset($credentials['remember']);
 
         if (!Auth::attempt($credentials, $remember)) {
             return response([
-                // 'error' => 'The Provided credentials are not correct'
+                // 'error' => 'The Provided credentials are not correct',
+                'error' => 'Password is not correct',
                 'errors' => 'Password is not correct!'
             ], 422);
         }

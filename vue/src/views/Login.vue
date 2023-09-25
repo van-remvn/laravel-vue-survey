@@ -65,7 +65,6 @@
           name="email"
           type="text"
           autocomplete="email"
-          required=""
           v-model="user.email"
           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
           placeholder="Username"
@@ -78,7 +77,6 @@
           name="password"
           type="password"
           autocomplete="current-password"
-          required=""
           v-model="user.password"
           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
           placeholder="Password"
@@ -151,8 +149,10 @@ function login(ev) {
       // errorMsg.value = err.response.data.error;
       if (err.response.data.errors['email'] != null) {
         errorMsg.value = err.response.data.errors['email'][0]
+      } else if (err.response.data.errors['password'] != null) {
+        errorMsg.value = err.response.data.errors['password'][0]
       } else {
-        errorMsg.value = err.response.data.errors
+        errorMsg.value = err.response.data.error;
       }
     });
 }
